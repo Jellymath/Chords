@@ -1,10 +1,12 @@
-package chords
+package chords.synth
 
 import javax.sound.midi.MidiSystem
-import javax.sound.midi.Synthesizer
 import kotlin.time.Duration
+import javax.sound.midi.Synthesizer as JavaxSynthesizer
 
-fun withSynth(
+typealias Synthesizer = JavaxSynthesizer
+
+inline fun withSynth(
     synthSupplier: () -> Synthesizer = { MidiSystem.getSynthesizer() },
     synthProgram: Int = 0,
     action: Synthesizer.() -> Unit

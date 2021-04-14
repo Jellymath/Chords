@@ -1,6 +1,7 @@
 package ui.swing
 
 import chords.*
+import chords.synth.*
 import java.awt.*
 import java.awt.event.*
 import javax.swing.*

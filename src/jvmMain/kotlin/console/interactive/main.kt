@@ -1,12 +1,14 @@
 package console.interactive
 
 import chords.*
+import chords.synth.*
 import kotlin.time.seconds
 
-fun main() {
+fun main() = withSynth {
     println("Type \"next\" to play next random chord")
-    println("Type \"add X\" to add chord pattern. Possible chords patterns: ${ChordPattern.values().contentToString()}")
-    println("Type \"remove X\" to remove chord pattern. Possible chords patterns: ${ChordPattern.values().contentToString()}")
+    val possibleChordsString = ChordPattern.values().contentToString()
+    println("Type \"add X\" to add chord pattern. Possible chords patterns: $possibleChordsString")
+    println("Type \"remove X\" to remove chord pattern. Possible chords patterns: $possibleChordsString")
     println("Type \"exit\" to exit")
     val currentOptions = mutableSetOf(ChordPattern.Basic)
     var chordPool = createChordTypePool(currentOptions)
@@ -17,9 +19,7 @@ fun main() {
             line == "next" -> {
                 val chord = Chord.random(chordPool)
                 println("Current chord: ${chord.name} (${chord.symbols})")
-                withSynth {
-                    play(chord.toMidiNotes(), 1.5.seconds)
-                }
+                play(chord.toMidiNotes(), 1.5.seconds)
             }
             line.startsWith("add ") -> {
                 val chordPattern = ChordPattern.valueOf(line.substringAfter("add ").capitalize())

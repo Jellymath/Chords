@@ -3,10 +3,11 @@ package console.predefined
 import chords.*
 import chords.Interval.*
 import chords.Note.*
+import chords.synth.*
 import kotlin.time.Duration
 import kotlin.time.seconds
 
-fun main() {
+fun main() = withSynth {
     val preJazzHarmony = listOf(
         D + minor to 2.seconds,
         EFlat + major over F to 1.seconds,
@@ -30,13 +31,11 @@ fun main() {
     play(firstLevelJazzHarmony)
 }
 
-private fun play(chordsInTime: List<Pair<Chord, Duration>>) {
+private fun Synthesizer.play(chordsInTime: List<Pair<Chord, Duration>>) {
     chordsInTime.forEach { (chord, time) ->
         println("Current chord: ${chord.name} (${chord.symbols})")
-        withSynth {
-            val notes = chord.toMidiNotes()
-            println(notes)
-            play(notes, time)
-        }
+        val notes = chord.toMidiNotes()
+        println(notes)
+        play(notes, time)
     }
 }
