@@ -31,9 +31,11 @@ class ChordsPanel : JPanel(BorderLayout()) {
     private val showAndPlayChord: (ActionEvent) -> Unit = {
         val chord = Chord.random(currentPool)
         label.text = "${chord.name} (${chord.symbols})"
-        thread {
-            withSynth {
-                play(chord.toMidiNotes(), 2.seconds)
+        if(!muted) {
+            thread {
+                withSynth {
+                    play(chord.toMidiNotes(), 2.seconds)
+                }
             }
         }
     }
@@ -56,7 +58,16 @@ class ChordsPanel : JPanel(BorderLayout()) {
         font = font.deriveFont(30f)
     }
 
+    private val sound = JButton("\uD83D\uDD0A").apply {
+        addActionListener {
+            muted = !muted
+            text = (if (muted) "\uD83D\uDD08" else "\uD83D\uDD0A")
+        }
+        font = font.deriveFont(30f)
+    }
+
     private var currentPool = createChordTypePool(chordOptions())
+    private var muted = false
 
     init {
         add(JPanel(GridLayout(0, 1)).apply {
@@ -65,6 +76,7 @@ class ChordsPanel : JPanel(BorderLayout()) {
             add(seventh)
             add(altered)
             add(extended)
+            add(sound)
         }, BorderLayout.LINE_START)
 
         add(JPanel(GridLayout(0, 1)).apply {
