@@ -1,8 +1,9 @@
 package ui.browser
 
 import chords.*
+import chords.synth.defaultSynth
+import chords.synth.muted
 import chords.synth.play
-import chords.synth.withSynth
 import kotlinx.browser.document
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLInputElement
@@ -11,19 +12,26 @@ import kotlin.time.seconds
 
 private val currentSelected = mutableSetOf(ChordPattern.Basic)
 private var currentPool = createChordTypePool(currentSelected)
-private var muted = false
+private var lastChord: Chord? = null
 
 fun showChord() {
-    val text = if (currentPool.isEmpty()) {
-        "No chord pattern was chosen, select some checkboxes!"
+    val (text, detailText) = if (currentPool.isEmpty()) {
+        lastChord = null
+        "No chord pattern was chosen, select some checkboxes!" to ""
     } else {
         val chord = Chord.random(currentPool)
-        val chordText = "${chord.name} (${chord.symbols})"
-        println("$chordText was chosen")
-        if (!muted) withSynth { play(chord.toMidiNotes(), 1.5.seconds) }
-        chordText
+        println("${chord.symbols} was chosen")
+        lastChord = chord
+        defaultSynth.play(chord.toMidiNotes(), 1.5.seconds)
+        chord.symbols to "(${chord.name})"
     }
     document.getElementById("chord-label")!!.innerHTML = text
+    document.getElementById("chord-label-detailed")!!.innerHTML = detailText
+}
+
+fun replayChord() {
+    val chord = lastChord
+    if (chord != null) defaultSynth.play(chord.toMidiNotes(), 1.5.seconds)
 }
 
 @JsName("updateChordPool")
@@ -39,14 +47,16 @@ fun updateChordPool(event: Event) {
     currentPool = createChordTypePool(currentSelected)
     println("${if (checked) "Selected" else "Deselected"} $pattern")
     println("New pattern list is $currentSelected")
-    println("New chord type pool is ${currentPool.map {it.name }}")
+    println("New chord type pool is ${currentPool.map { it.name }}")
 }
 
 @JsName("toggleMute")
 fun toggleMute(event: Event) {
-    muted = !muted
-    val button = event.target as HTMLButtonElement
-    button.innerHTML = if (muted) "\uD83D\uDD08" else "\uD83D\uDD0A"
+    with(defaultSynth) {
+        muted = !muted
+        val button = event.target as HTMLButtonElement
+        button.innerHTML = if (muted) "\uD83D\uDD08" else "\uD83D\uDD0A"
+    }
 }
 
 fun main() {
@@ -55,5 +65,6 @@ fun main() {
         .forEach { it.addEventListener("input", ::updateChordPool) }
     document.getElementById("button-next")!!.addEventListener("click", { showChord() })
     document.getElementById("button-mute")!!.addEventListener("click", ::toggleMute)
+    document.getElementById("button-repeat")!!.addEventListener("click", { replayChord() })
 }
 
