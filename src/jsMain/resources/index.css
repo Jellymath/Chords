@@ -1,0 +1,47 @@
+body {
+    background: black;
+    font-family: 'Roboto', sans-serif;
+    color: hotpink;
+    font-size: 20px;
+}
+
+h1 {
+    color: aqua;
+    font-family: 'Zilla Slab Highlight', cursive;
+}
+
+button {
+    -webkit-border-radius: 20px;
+    -moz-border-radius: 20px;
+    border-radius: 20px;
+    color: #FFFFFF;
+    padding: 15px;
+    background-color: #000000;
+    -webkit-box-shadow: 1px 1px 20px 0 #FF69B4;
+    -moz-box-shadow: 1px 1px 20px 0 #FF69B4;
+    box-shadow: 1px 1px 20px 0 #FF69B4;
+    border: groove #00FFFF 1px;
+    display: inline-block;
+    cursor: pointer;
+    text-align: center;
+    width: max-content;
+}
+
+.main {
+    display: flex;
+    flex-direction: column;
+}
+
+.action-buttons {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 10px;
+}
+
+#button-mute {
+margin-top: 10px;
+}
+
+#button-next {
+    margin-right: 10px;
+}
